@@ -26,18 +26,16 @@ export default function DashboardScreen() {
   if (kinde?.isLoading || kinde?.isAuthenticated === undefined) {
     return (
       <SafeAreaView style={[styles.loadingContainer, {backgroundColor: isDark ? '#000000' : '#FFFFFF'}]}>
-        <ActivityIndicator size="large" color="white" />
+        <ActivityIndicator size="large" color={isDark ? "#ffffff" : "#000000"} />
         <ThemedText style={styles.loadingText}>Loading...</ThemedText>
       </SafeAreaView>
     );
   }
 
-  // Don't render anything if not authenticated
   if (!kinde.isAuthenticated) {
     return null;
   }
 
-  // Using the original structure that works properly
   return (
     <ScrollView 
       style={[styles.scrollView, {backgroundColor: isDark ? '#000000' : '#FFFFFF'}]}
