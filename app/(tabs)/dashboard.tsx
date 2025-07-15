@@ -8,11 +8,19 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Pressable, ActivityIndicator, View, Text } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
+import { useEffect } from 'react';
 
 export default function DashboardScreen() {
   const kinde = useKindeAuth();
   const { isDark } = useTimeBasedTheme();
   const insets = useSafeAreaInsets();
+  
+  // Handle navigation redirect for unauthenticated users
+  useEffect(() => {
+    if (kinde?.isAuthenticated === false) {
+      router.replace('/');
+    }
+  }, [kinde?.isAuthenticated]);
   
   const handleLogout = async () => {
     try {
