@@ -5,7 +5,7 @@ import { UserProfile } from '@/components/UserProfile';
 import { useKindeAuth } from '@kinde/expo';
 import { useTimeBasedTheme } from '@/context/ThemeContext';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Pressable, ActivityIndicator, View } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, ActivityIndicator, View, Text } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 
@@ -22,7 +22,6 @@ export default function DashboardScreen() {
     }
   };
 
-  // Show loading state while checking authentication
   if (kinde?.isLoading || kinde?.isAuthenticated === undefined) {
     return (
       <SafeAreaView style={[styles.loadingContainer, {backgroundColor: isDark ? '#000000' : '#FFFFFF'}]}>
@@ -52,6 +51,12 @@ export default function DashboardScreen() {
         <ThemedView style={[styles.card, { width: '100%' }]}>
           <ThemedText style={styles.cardTitle}>User Profile</ThemedText>
           <UserProfile showTitle={false} />
+          <Pressable
+            style={[styles.button, isDark && styles.buttonDark]}
+            onPress={() => Linking.openURL('https://docs.kinde.com/developer-tools/sdks/mobile/expo-sdk/')}
+          >
+            <Text style={[styles.buttonText, isDark && styles.buttonTextDark]}>See full Expo SDK docs</Text>
+          </Pressable>
         </ThemedView>
         
         <ThemedView style={[styles.card, { width: '100%' }]}>
@@ -185,5 +190,23 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 16,
     fontSize: 16,
+  },
+  button: {
+    backgroundColor: 'black',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  buttonDark: {
+    backgroundColor: 'white',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  buttonTextDark: {
+    color: 'black',
   }
 });

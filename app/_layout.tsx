@@ -45,7 +45,6 @@ function AuthChecker() {
 function RootLayoutContent() {
   const { isDark, colorScheme } = useTimeBasedTheme();
 
-  // Create themes
   const CustomDarkTheme = {
     ...DarkTheme,
     colors: {
@@ -74,11 +73,11 @@ function RootLayoutContent() {
     >
       <AuthChecker />
       <NavigationThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-        <View style={[styles.container, {backgroundColor: isDark ? '#000000' : '#ffffff'}]}>
+        <View style={[styles.container, {backgroundColor: isDark ? CustomDarkTheme.colors.background : CustomLightTheme.colors.background}]}>
           <Stack
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
+              contentStyle: { backgroundColor: isDark ? CustomDarkTheme.colors.background : CustomLightTheme.colors.background },
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
