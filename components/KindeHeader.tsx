@@ -73,7 +73,7 @@ export function KindeHeader() {
               <Text style={styles.signInText}>Account</Text>
             </Pressable>
             <Pressable onPress={handleLogout} style={styles.registerButton}>
-              <Text style={styles.registerText}>Log outs</Text>
+              <Text style={styles.registerText}>Log out</Text>
             </Pressable>
           </>
         )}
