@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useTimeBasedTheme as useTimeBasedThemeHook } from '../hooks/useTimeBasedTheme';
 
 type ThemeContextType = {
   isDark: boolean;
@@ -11,29 +12,12 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const { isDark, colorScheme } = useTimeBasedThemeHook();
   
-  const checkShouldBeDarkMode = () => {
-    const currentHour = new Date().getHours();
-    // Log for debugging
-    console.log(`Current hour: ${currentHour}, Dark mode: ${currentHour >= 18 || currentHour < 6}`);
-    return currentHour >= 18 || currentHour < 6; // Dark mode after 6PM or before 6AM
-  };
-  
-  useEffect(() => {
-    // Initial check
-    setIsDark(checkShouldBeDarkMode());
-    
-    // Check every minute
-    const interval = setInterval(() => {
-      setIsDark(checkShouldBeDarkMode());
-    }, 60000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
+  const safeColorScheme: 'light' | 'dark' = colorScheme === 'dark' ? 'dark' : 'light';
+
   return (
-    <ThemeContext.Provider value={{ isDark, colorScheme: isDark ? 'dark' : 'light' }}>
+    <ThemeContext.Provider value={{ isDark, colorScheme: safeColorScheme }}>
       {children}
     </ThemeContext.Provider>
   );
