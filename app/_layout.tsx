@@ -1,7 +1,7 @@
 import { KindeAuthProvider, useKindeAuth } from '@kinde/expo';
-import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from "expo-router/react-navigation";
 import Constants from 'expo-constants';
-import { useFonts } from 'expo-font';
+
 import { Stack, usePathname, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
@@ -11,14 +11,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTimeBasedTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
 
-export default function RootLayout() {
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+import * as SplashScreen from 'expo-splash-screen';
 
-  if (!loaded) {
-    return null;
-  }
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  useEffect(() => {
+    console.log("SWITCH_ORG: RootLayout mounted (app startup)");
+    SplashScreen.hideAsync();
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -32,17 +33,23 @@ export default function RootLayout() {
 function AuthChecker() {
   const kinde = useKindeAuth();
   const pathname = usePathname();
-  
+
   useEffect(() => {
-    if (kinde?.isAuthenticated === false && pathname !== '/') {
+    console.log("SWITCH_ORG: AuthChecker evaluated", { isAuthenticated: kinde?.isAuthenticated, pathname, isLoading: kinde?.isLoading });
+    // Only kick the user out if the SDK has FINISHED loading and they are still not authenticated.
+    if (kinde?.isLoading === false && kinde?.isAuthenticated === false && pathname !== '/') {
+      console.log("SWITCH_ORG: AuthChecker routing back to /");
       router.replace('/');
     }
-  }, [kinde?.isAuthenticated, pathname]);
+  }, [kinde?.isAuthenticated, kinde?.isLoading, pathname]);
 
   return null;
 }
 
 function RootLayoutContent() {
+  useEffect(() => {
+    console.log("SWITCH_ORG: RootLayoutContent mounted (app startup)");
+  }, []);
   const { isDark, colorScheme } = useTimeBasedTheme();
 
   const CustomDarkTheme = {
@@ -67,13 +74,13 @@ function RootLayoutContent() {
     <KindeAuthProvider
       config={{
         domain: Constants.expoConfig?.extra?.EXPO_PUBLIC_KINDE_DOMAIN,
-        clientId: Constants.expoConfig?.extra?.EXPO_PUBLIC_KINDE_CLIENT_ID, 
+        clientId: Constants.expoConfig?.extra?.EXPO_PUBLIC_KINDE_CLIENT_ID,
         scopes: "openid profile email offline",
       }}
     >
       <AuthChecker />
       <NavigationThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-        <View style={[styles.container, {backgroundColor: isDark ? CustomDarkTheme.colors.background : CustomLightTheme.colors.background}]}>
+        <View style={[styles.container, { backgroundColor: isDark ? CustomDarkTheme.colors.background : CustomLightTheme.colors.background }]}>
           <Stack
             screenOptions={{
               headerShown: false,

@@ -1,5 +1,6 @@
 // components/Auth.tsx
 import { useKindeAuth } from '@kinde/expo';
+import { PromptTypes } from '@kinde/expo/utils';
 import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -16,6 +17,18 @@ export function Auth() {
       }
     } catch (error) {
       console.error('Sign in error:', error);
+    }
+  };
+
+  const handleSilentSignIn = async () => {
+    try {
+      const token = await kinde.login({ prompt: PromptTypes.none });
+      if (token) {
+        console.log('User silently signed in successfully');
+        router.replace('/dashboard');
+      }
+    } catch (error) {
+      console.error('Silent sign in error:', error);
     }
   };
 
@@ -47,6 +60,12 @@ export function Auth() {
         onPress={handleSignIn}
       >
         <Text style={styles.signInText}>Sign in</Text>
+      </Pressable>
+      <Pressable
+        style={styles.signInButton}
+        onPress={handleSilentSignIn}
+      >
+        <Text style={styles.signInText}>Silent Log in</Text>
       </Pressable>
       <Pressable
         style={styles.registerButton}
